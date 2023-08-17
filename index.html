@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    background-image: url("atardecer-en-la-playa_1360x2400_xtrafondos.com.jpg");
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 36px;
+    color: rgba(10, 0, 0, 0.979);
+  }
+
+  .input-section,
+  .extra-section,
+  .total-section {
+    background-color: rgba(78, 67, 67, 0.719);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(228, 11, 11, 0.1);
+    margin-top: 20px;
+  }
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-bottom: 5px;
+  }
+
+  input {
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #3f5369;
+  }
+
+  .extra-entry {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .extra-entry input[type="text"],
+  .extra-entry input[type="number"] {
+    margin-right: 10px;
+  }
+
+  .line {
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+  }
+</style>
+<title>Eco Contable</title>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Eco Contable</h1>
+    </header>
+    <section class="input-section">
+      <h2>Ingrese los datos:</h2>
+      <form>
+        <label for="salario">Salario bruto:</label>
+        <input type="number" id="salario" name="salario" required>
+        <label for="gastos-medicos">Gastos médicos:</label>
+        <input type="number" id="gastos-medicos" name="gastos-medicos" required>
+        <label for="transporte">Transporte:</label>
+        <input type="number" id="transporte" name="transporte" required>
+        <label for="educacion">Educación:</label>
+        <input type="number" id="educacion" name="educacion" required>
+        <label for="comida">Comida:</label>
+        <input type="number" id="comida" name="comida" required>
+        <label for="vivienda">Vivienda:</label>
+        <input type="number" id="vivienda" name="vivienda" required>
+        <label for="ahorros">Ahorros:</label>
+        <input type="number" id="ahorros" name="ahorros" required>
+        <button type="button" onclick="calcularTotal()">Calcular Total</button>
+        <div class="line"></div>
+        <h2>Gastos Extra:</h2>
+        <div class="extra-section" id="gastos-extra">
+          <!-- Los gastos extra se agregarán aquí -->
+        </div>
+        <button type="button" onclick="agregarGastoExtra()">Agregar Gasto Extra</button>
+      </form>
+    </section>
+    <section class="extra-section">
+      <h2>Ingresos Extra:</h2>
+      <div class="extra-section" id="ingresos-extra">
+        <!-- Los ingresos extra se agregarán aquí -->
+      </div>
+      <button type="button" onclick="agregarIngresoExtra()">Agregar Ingreso Extra</button>
+    </section>
+    <section class="total-section">
+      <h2>saldo:</h2>
+      <div id="total">
+        <!-- El total se mostrará aquí -->
+      </div>
+    </section>
+  </div>
+  
+  <script>
+    let gastosExtra = [];
+    let ingresosExtra = [];
+
+    function agregarGastoExtra() {
+      const gastosExtraDiv = document.getElementById("gastos-extra");
+      const nuevaEntrada = crearEntrada("gasto");
+      gastosExtraDiv.appendChild(nuevaEntrada);
+      gastosExtra.push(nuevaEntrada);
+    }
+
+    function agregarIngresoExtra() {
+      const ingresosExtraDiv = document.getElementById("ingresos-extra");
+      const nuevaEntrada = crearEntrada("ingreso");
+      ingresosExtraDiv.appendChild(nuevaEntrada);
+      ingresosExtra.push(nuevaEntrada);
+    }
+
+    function crearEntrada(tipo) {
+      const nuevaEntrada = document.createElement("div");
+      nuevaEntrada.className = "extra-entry";
+      nuevaEntrada.innerHTML = `
+        <input type="text" placeholder="Nombre">
+        <input type="number" placeholder="Cantidad">
+        <button type="button" onclick="eliminarEntrada(this)">Borrar</button>
+      `;
+      return nuevaEntrada;
+    }
+
+    function eliminarEntrada(boton) {
+      const entrada = boton.parentNode;
+      entrada.parentNode.removeChild(entrada);
+
+      if (gastosExtra.includes(entrada)) {
+        gastosExtra = gastosExtra.filter(item => item !== entrada);
+      } else if (ingresosExtra.includes(entrada)) {
+        ingresosExtra = ingresosExtra.filter(item => item !== entrada);
+      }
+    }
+
+    function calcularTotal() {
+      const totalDiv = document.getElementById("total");
+      let total = parseFloat(document.getElementById("salario").value) || 0;
+      
+      total -= parseFloat(document.getElementById("gastos-medicos").value) || 0;
+      total -= parseFloat(document.getElementById("transporte").value) || 0;
+      total -= parseFloat(document.getElementById("educacion").value) || 0;
+      total -= parseFloat(document.getElementById("comida").value) || 0;
+      total -= parseFloat(document.getElementById("vivienda").value) || 0;
+      total -= parseFloat(document.getElementById("ahorros").value) || 0;
+
+      gastosExtra.forEach(entrada => {
+        const cantidadInput = entrada.querySelector("input[type='number']");
+        total -= parseFloat(cantidadInput.value) || 0;
+      });
+
+      ingresosExtra.forEach(entrada => {
+        const cantidadInput = entrada.querySelector("input[type='number']");
+        total += parseFloat(cantidadInput.value) || 0;
+      });
+
+      totalDiv.textContent = `Total: ${total}`;
+    }
+  </script>
+</body>
+</html>
